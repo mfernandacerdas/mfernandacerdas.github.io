@@ -1,0 +1,398 @@
+
+:root {
+  --bg: #ffffff;
+  --text: #111111;
+  --muted: #767676;
+  --hover-bg: #f2f2f2;
+  --line: #e5e5e5;
+  --sidebar-width: 360px;
+  --font: 'Fira Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+a { color: inherit; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  overflow-y: auto;
+  padding: 32px 24px 32px 40px;
+  border-right: 1px solid var(--line);
+  font-family: 'Datatype', monospace;
+}
+
+.sidebar-name {
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 700;
+  font-size: 35px;
+  margin-bottom: 12px;
+  transition: font-size 180ms ease, line-height 180ms ease, margin-bottom 180ms ease;
+}
+
+.sidebar-about {
+  margin-bottom: 24px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid var(--line);
+  transition: margin-bottom 180ms ease, padding-bottom 180ms ease;
+}
+
+.sidebar-about p {
+  margin: 0 0 10px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  transition: font-size 180ms ease, line-height 180ms ease;
+}
+
+.sidebar-contact {
+  display: inline-block;
+  font-size: 15px;
+  text-decoration: underline;
+  color: var(--text);
+}
+
+.sidebar-contact:hover,
+.sidebar-contact:focus-visible {
+  color: var(--text);
+}
+
+.sidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-item {
+  display: block;
+  padding: 4px 6px;
+  margin: 0 -6px;
+  border-radius: 3px;
+  text-decoration: none;
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'Datatype', monospace;
+  font-weight: 400;
+  transition: transform 180ms ease, font-weight 180ms ease;
+  transform-origin: left center;
+}
+
+.sidebar-item .sidebar-date {
+  color: var(--muted);
+  font-size: 11px;
+  display: block;
+}
+
+.sidebar-item:hover,
+.sidebar-item:focus-visible {
+  background: var(--hover-bg);
+  font-family: 'Datatype', monospace;
+  font-weight: 700;
+  transform: scale(1.03);
+}
+
+.sidebar-item.active {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.sidebar-item.active .sidebar-date {
+  color: #cccccc;
+}
+
+/* Grid view */
+.grid-view {
+  margin-left: var(--sidebar-width);
+  padding: 80px 40px 32px;
+  min-height: 100vh;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.grid-item {
+  cursor: pointer;
+}
+
+.grid-item img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  display: block;
+  background: var(--hover-bg);
+}
+
+.grid-item-caption {
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+.grid-item:hover .grid-item-caption {
+  text-decoration: underline;
+}
+
+/* Project view */
+.project-view {
+  display: none; /* JS sets to "flex" when a project is opened */
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+}
+
+.project-view.visible {
+  display: flex;
+}
+
+.project-text {
+  width: min(320px, 100%);
+  max-width: 320px;
+  flex-shrink: 0;
+  padding: 32px 32px 32px 40px;
+  border-right: 1px solid var(--line);
+}
+
+.back-link {
+  display: inline-block;
+  text-decoration: underline;
+  color: var(--text);
+  font-size: 12px;
+  margin-bottom: 24px;
+}
+
+.project-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.project-meta {
+  color: var(--muted);
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.project-description {
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.project-description p {
+  margin: 0 0 12px 0;
+}
+
+.project-description p:last-child {
+  margin-bottom: 0;
+}
+
+/* Carousel */
+.project-carousel {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 40px 20px;
+  gap: 16px;
+  transition: background-color 350ms ease;
+}
+
+.carousel-frame {
+  position: relative;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.16);
+}
+
+.carousel-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.carousel-frame {
+  flex: 1 1 auto;
+  width: min(100%, 980px);
+  max-width: 980px;
+  min-width: 0;
+}
+
+.carousel-image {
+  width: 100%;
+  display: block;
+  background: var(--hover-bg);
+  max-height: 72vh;
+  object-fit: contain;
+}
+
+.carousel-arrow {
+  background: #ffffff;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-family: var(--font);
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.carousel-arrow:hover {
+  background: var(--hover-bg);
+  border-color: var(--text);
+}
+
+.carousel-counter {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  ...
+}
+.carousel-counter.on-light { /* basically like if the bg is a light color it should show up as black text */
+  color: #111111;
+}
+
+.carousel-counter.on-dark { /* and here the opposite, if the bg is dark it should show up as white text */
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive layout */
+@media (max-width: 800px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sidebar-list {
+    display: none;
+  }
+
+  .grid-view, .project-view {
+    margin-left: 0;
+  }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .project-view.visible {
+    flex-direction: column;
+  }
+  .project-text {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 700px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    padding: 24px 18px 18px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    overflow: visible;
+  }
+
+  .sidebar-name {
+    font-size: 30px;
+    margin-bottom: 10px;
+  }
+
+  .sidebar-about {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+  }
+
+  .sidebar-about p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .sidebar-list {
+    display: none;
+  }
+
+  .grid-view, .project-view {
+    margin-left: 0;
+    padding: 20px 18px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Keyboard accessibility */
+a:focus-visible, .sidebar-item:focus-visible, .carousel-arrow:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+@media (max-width: 700px) {
+  .project-carousel {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    background-color: transparent !important;
+    padding: 16px 0 0;
+  }
+
+  .carousel-frame {
+    order: 3;
+    box-shadow: none;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .carousel-frame::before {
+    display: none;
+  }
+
+  .carousel-image {
+    max-height: none;
+    width: 100%;
+  }
+
+  .carousel-prev { order: 1; }
+  .carousel-next { order: 2; }
+
+  .carousel-arrow {
+    position: static;
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  .carousel-counter {
+    order: 4;
+    position: static;
+    transform: none;
+    margin-top: 4px;
+  }
+}
