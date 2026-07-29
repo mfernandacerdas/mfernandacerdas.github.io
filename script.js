@@ -2,12 +2,21 @@ const projects = [
   {
     id: "badmintico",
     name: "Badmintico",
+    name_es: "Badmintico",
     date: "2026",
     type: "Client Project",
+    type_es: "Proyecto para cliente",
     description: `A full brand identity redesign, from zero, for the Costa Rican badminton product distributor 
     Badmintico: logo, mascot, theming. The direction leaned retro with a modern twist, while retaining the 
     essence of a national brand. A key focus was making the social media grid feel welcoming despite repetitive 
     product photography, without alienating the audience of serious, professional players.`,
+    description_es: `Un rediseño completo de identidad de marca, desarrollado desde cero, para Badmintico, 
+    distribuidor costarricense de productos de bádminton: logotipo, mascota y línea gráfica.
+    
+    La propuesta tomó como inspiración una estética retro con un enfoque contemporáneo, manteniendo la esencia 
+    de una marca nacional. Uno de los principales objetivos fue crear una presencia en redes sociales más cálida y 
+    atractiva, capaz de dar dinamismo a una cuadrícula compuesta en gran parte por fotografías repetitivas de 
+    productos, sin dejar de transmitir la seriedad y profesionalismo que busca su público de jugadores competitivos.`,
     images: [
       "images/badmintico/badmintico_1.png",
       "images/badmintico/badmintico_2.png",
@@ -18,13 +27,22 @@ const projects = [
   {
     id: "ExpoAnime",
     name: "Expo Anime Art",
+    name_es: "Expo Anime Art",
     date: "2024",
     type: "Pro-bono Client Project",
+    type_es: "Proyecto pro-bono para cliente",
     description: `A logo redesign and social media theming for the Costa Rican anime convention, Expo Anime Art. 
     The convention's next event fell in summer, so the redesign needed to reflect that seasonally while 
     staying aligned with current anime and V-tuber visual trends. As a small-scale pro-bono effort, 
     the goal was to give this grassroots convention a stronger identity heading into its 
     next season, along with a more consistent visual presence across its social media grid.`,
+    description_es: `Una propuesta de rediseño de logotipo y línea gráfica para redes sociales de la 
+    convención costarricense de anime Expo Anime Art. El siguiente evento de la convención se celebraría 
+    durante el verano, por lo que el rediseño debía reflejar esa temporada sin perder coherencia con las 
+    tendencias visuales actuales del anime y los VTubers. Al tratarse de un proyecto pro bono de 
+    pequeña escala, el objetivo era fortalecer la identidad de esta convención de base comunitaria de 
+    cara a su próxima edición, además de darle una presencia visual más consistente y 
+    cohesionada en sus redes sociales.`,
     images: [
       "images/expoanime/expoanime_1.png",
       "images/expoanime/expoanime_2.png",
@@ -35,12 +53,20 @@ const projects = [
   {
     id: "Doughboys",
     name: "Doughboys",
+    name_es: "Doughboys",
     date: "2025",
     type: "University Project",
+    type_es: "Proyecto Universitario",
     description: `A university project to redesign a fictional pizzeria's logo, reimagining it as a 
     family-friendly restaurant that steps away from typical Italian imagery. 
     The goal was a logo that speaks to a clientele of young adults and families, 
     while positioning the restaurant as a trendy hub for foodies and food bloggers.`,
+    description_es: `Un proyecto universitario enfocado en el rediseño del logotipo de una pizzería ficticia, 
+    replanteándola como un restaurante familiar que se aleja de la imaginería italiana tradicional.
+    
+    El objetivo fue desarrollar una identidad visual capaz de conectar tanto con adultos jóvenes como con familias, 
+    posicionando al restaurante como un punto de encuentro moderno y atractivo para amantes de la gastronomía 
+    y creadores de contenido culinario.`,
     images: [
       "images/doughboys/dougboys_1.png",
       "images/doughboys/dougboys_2.png",
@@ -61,6 +87,9 @@ const backLink = document.getElementById("back-link");
 const projectTitle = document.getElementById("project-title");
 const projectMeta = document.getElementById("project-meta");
 const projectDescription = document.getElementById("project-description");
+const langToggleButton = document.getElementById("lang-toggle");
+const sidebarCopy1 = document.getElementById("sidebar-copy-1");
+const sidebarCopy2 = document.getElementById("sidebar-copy-2");
 
 const carouselImage = document.getElementById("carousel-image");
 const carouselCounter = document.getElementById("carousel-counter");
@@ -72,47 +101,109 @@ const averageColorCanvas = document.createElement("canvas");
 const averageColorContext = averageColorCanvas.getContext("2d");
 
 let currentProject = null;
+let currentProjectId = null;
 let currentImageIndex = 0;
+let lang = "en";
 
-// Build sidebar links
-orderedProjects.forEach((project) => {
-  const item = document.createElement("a");
-  item.href = "#";
-  item.className = "sidebar-item";
-  item.dataset.id = project.id;
-  item.innerHTML = `${project.name}<span class="sidebar-date">${project.date}</span>`;
-  item.addEventListener("click", (e) => {
-    e.preventDefault();
-    openProject(project.id);
+function getStoredLanguage() {
+  try {
+    const savedLang = localStorage.getItem("portfolio-lang");
+    return savedLang === "es" ? "es" : "en";
+  } catch (e) {
+    return "en";
+  }
+}
+
+function getProjectValue(project, field) {
+  const localizedField = `${field}_es`;
+  if (lang === "es" && project[localizedField]) {
+    return project[localizedField];
+  }
+  return project[field];
+}
+
+function getUiLabel(key) {
+  if (key === "back") {
+    return lang === "es" ? "volver" : "back";
+  }
+  if (key === "contact") {
+    return lang === "es" ? "Contacto" : "Contact";
+  }
+  return key;
+}
+
+function normalizeDescriptionText(value) {
+  if (Array.isArray(value)) {
+    return value.join(" ");
+  }
+
+  return String(value ?? "")
+    .replace(/\r/g, "")
+    .trim();
+}
+
+function updateSidebarCopy() {
+  if (sidebarCopy1) {
+    sidebarCopy1.textContent = lang === "es"
+      ? "diseñadora trabajando entre movimiento, impresión y pantalla. hagamos algo genial juntos."
+      : "designer working across motion, print, and screen. let's make something cool together.";
+  }
+
+  if (sidebarCopy2) {
+    sidebarCopy2.textContent = lang === "es"
+      ? "diseño gráfico, maquetación, motion graphics, animación 2D, ilustración."
+      : "graphic design, layout, motion graphics, 2D animation, illustration.";
+  }
+}
+
+function setActiveSidebarItem(id) {
+  document.querySelectorAll(".sidebar-item").forEach((el) => {
+    el.classList.toggle("active", el.dataset.id === id);
   });
-  sidebarList.appendChild(item);
-});
+}
 
-// Build grid items
-orderedProjects.forEach((project) => {
-  const item = document.createElement("div");
-  item.className = "grid-item";
-  item.innerHTML = `
-    <img src="${project.images[0]}" alt="${project.name}">
-    <div class="grid-item-caption">${project.name}</div>
-  `;
-  item.addEventListener("click", () => openProject(project.id));
-  grid.appendChild(item);
-});
+function renderSidebarAndGrid() {
+  sidebarList.replaceChildren();
+  grid.replaceChildren();
 
-// Open a project
-function openProject(id) {
-  const project = orderedProjects.find((p) => p.id === id) || projects.find((p) => p.id === id);
-  if (!project) return;
+  orderedProjects.forEach((project) => {
+    const item = document.createElement("a");
+    item.href = "#";
+    item.className = "sidebar-item";
+    item.dataset.id = project.id;
+    item.innerHTML = `${getProjectValue(project, "name")}<span class="sidebar-date">${project.date}</span>`;
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      openProject(project.id);
+    });
+    sidebarList.appendChild(item);
+  });
 
-  currentProject = project;
-  currentImageIndex = 0;
+  orderedProjects.forEach((project) => {
+    const item = document.createElement("div");
+    item.className = "grid-item";
+    item.innerHTML = `
+      <img src="${project.images[0]}" alt="${getProjectValue(project, "name")}">
+      <div class="grid-item-caption">${getProjectValue(project, "name")}</div>
+    `;
+    item.addEventListener("click", () => openProject(project.id));
+    grid.appendChild(item);
+  });
 
-  projectTitle.textContent = project.name;
-  projectMeta.textContent = `${project.date} — ${project.type}`;
+  if (currentProjectId) {
+    setActiveSidebarItem(currentProjectId);
+  }
+}
+
+function renderProjectView() {
+  if (!currentProject) return;
+
+  projectTitle.textContent = getProjectValue(currentProject, "name");
+  projectMeta.textContent = `${currentProject.date} — ${getProjectValue(currentProject, "type")}`;
 
   projectDescription.replaceChildren();
-  const paragraphs = project.description
+  const descriptionText = normalizeDescriptionText(getProjectValue(currentProject, "description"));
+  const paragraphs = descriptionText
     .split(/\n\s*\n/)
     .map((paragraph) => paragraph.replace(/\n/g, " ").trim())
     .filter(Boolean);
@@ -126,14 +217,45 @@ function openProject(id) {
   projectDescription.appendChild(fragment);
 
   updateCarousel();
+}
+
+function updateLanguageUI() {
+  document.documentElement.lang = lang;
+
+  if (langToggleButton) {
+    langToggleButton.textContent = lang === "en" ? "english" : "español";
+    langToggleButton.setAttribute("aria-label", lang === "en" ? "Switch to Spanish" : "Switch to English");
+  }
+
+  const contactLink = document.querySelector(".sidebar-contact");
+  if (backLink) {
+    backLink.textContent = getUiLabel("back");
+  }
+  if (contactLink) {
+    contactLink.textContent = getUiLabel("contact");
+  }
+
+  updateSidebarCopy();
+  renderSidebarAndGrid();
+  if (currentProject) {
+    renderProjectView();
+  }
+}
+
+// Open a project
+function openProject(id) {
+  const project = orderedProjects.find((p) => p.id === id) || projects.find((p) => p.id === id);
+  if (!project) return;
+
+  currentProject = project;
+  currentProjectId = id;
+  currentImageIndex = 0;
+
+  renderProjectView();
 
   gridView.style.display = "none";
   projectView.classList.add("visible");
-
-  // highlight active sidebar item
-  document.querySelectorAll(".sidebar-item").forEach((el) => {
-    el.classList.toggle("active", el.dataset.id === id);
-  });
+  setActiveSidebarItem(id);
 
   window.scrollTo(0, 0);
 }
@@ -141,17 +263,29 @@ function openProject(id) {
 // Close the project view
 function closeProject() {
   currentProject = null;
+  currentProjectId = null;
   projectView.classList.remove("visible");
   gridView.style.display = "block";
-  document.querySelectorAll(".sidebar-item").forEach((el) => {
-    el.classList.remove("active");
-  });
+  renderSidebarAndGrid();
 }
 
 backLink.addEventListener("click", (e) => {
   e.preventDefault();
   closeProject();
 });
+
+langToggleButton.addEventListener("click", () => {
+  lang = lang === "en" ? "es" : "en";
+  try {
+    localStorage.setItem("portfolio-lang", lang);
+  } catch (e) {
+    // Ignore storage errors silently.
+  }
+  updateLanguageUI();
+});
+
+lang = getStoredLanguage();
+updateLanguageUI();
 
 // Carousel helpers
 function rgbToHsl(r, g, b) {

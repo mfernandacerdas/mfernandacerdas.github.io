@@ -51,6 +51,28 @@ a { color: inherit; }
   transition: margin-bottom 180ms ease, padding-bottom 180ms ease;
 }
 
+.sidebar-controls {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+}
+
+.lang-toggle {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  font-family: 'Datatype', monospace;
+  font-size: 13px;
+  padding: 6px 10px;
+  cursor: pointer;
+  min-width: 88px;
+}
+
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+  background: var(--hover-bg);
+}
+
 .sidebar-about p {
   margin: 0 0 10px 0;
   font-size: 15px;
@@ -267,8 +289,11 @@ a { color: inherit; }
   top: 30px;
   left: 50%;
   transform: translateX(-50%);
-  ...
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
+
 .carousel-counter.on-light { /* basically like if the bg is a light color it should show up as black text */
   color: #111111;
 }
